@@ -3,6 +3,34 @@ class ApplicationController < ActionController::Base
   include SessionsHelper
 
   $days_of_the_week = %w{日 月 火 水 木 金 土}
+  
+  
+  before_action :set_user, only: [:show, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+  before_action :logged_in_user, only: [:index, :edit, :update, :destroy, :edit_basic_info, :update_basic_info]
+  before_action :correct_user, only: [:edit, :update]
+  before_action :admin_user, only: [:destroy, :edit_basic_info, :update_basic_info]
+  before_action :set_one_month, only: :show
+  
+  
+  def set_user
+    @user = User.find(params[:id])
+  end
+  
+  def logged_in_user
+    unless logged_in?
+    store_location
+    flash[:danger] = "ログインしてください。"
+    redirect_to login_url
+    end
+  end
+  
+  def correct_user
+    redirect_to(root_url) unless current_user?(@user)
+  end
+  
+  def admin_user
+    redirect_to root_url unless current_user.admin?
+  end
 
   # ページ出力前に1ヶ月分のデータの存在を確認・セットします。
   def set_one_month 
@@ -18,7 +46,7 @@ class ApplicationController < ActionController::Base
         # 繰り返し処理により、1ヶ月分の勤怠データを生成します。
         one_month.each { |day| @user.attendances.create!(worked_on: day) }
       end
-      @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
+    @attendances = @user.attendances.where(worked_on: @first_day..@last_day).order(:worked_on)
     end
 
   rescue ActiveRecord::RecordInvalid # トランザクションによるエラーの分岐です。
