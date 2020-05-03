@@ -12,11 +12,8 @@ Rails.application.routes.draw do
       get 'edit_basic_info'
       patch 'update_basic_info'
       get 'attendances/edit_one_month'
-<<<<<<< HEAD
       patch 'attendances/update_one_month'
-=======
       patch 'attendances/update_one_month' # この行が追加対象です。
->>>>>>> edit-attendances2
     end
     resources :attendances, only: :update
   end

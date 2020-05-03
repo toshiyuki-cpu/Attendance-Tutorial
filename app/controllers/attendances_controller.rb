@@ -27,11 +27,9 @@ class AttendancesController < ApplicationController
 
   def edit_one_month
   end
-<<<<<<< HEAD
   
   def update_one_month
   end
-=======
 
   def update_one_month
     ActiveRecord::Base.transaction do # トランザクションを開始します。
@@ -52,5 +50,4 @@ class AttendancesController < ApplicationController
     def attendances_params
       params.require(:user).permit(attendances: [:started_at, :finished_at, :note])[:attendances]
     end
->>>>>>> edit-attendances2
 end
